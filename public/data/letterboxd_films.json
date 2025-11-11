@@ -1,5 +1,88 @@
 [
   {
+    "title": "Silo After Hours",
+    "slug": "silo-after-hours",
+    "film_link": "/film/silo-after-hours/",
+    "full_display_name": "Silo After Hours (2025)",
+    "film_id": "1401234",
+    "poster_url": "/posters/silo_after.jpg",
+    "details_endpoint": "/film/silo-after-hours/json/",
+    "full_url": null,
+    "year": "2025",
+    "date": "2025-10-18",
+    "genre": [
+      "Horror",
+      "Thriller"
+    ],
+    "image": "/posters/silo_after.jpg",
+    "duration": "7 mins",
+    "logline": null,
+    "description": null,
+    "cast": [
+      {
+        "name": "Liam Fink",
+        "role": "Lars"
+      },
+      {
+        "name": "Anders Jacobson",
+        "role": "Casey"
+      },
+      {
+        "name": "Alex Rossi",
+        "role": "Sam Swope"
+      },
+      {
+        "name": "Evan Enwright",
+        "role": "Ivan \"Pudge\""
+      },
+      {
+        "name": "Colin B. Fink",
+        "role": "Voyager"
+      }
+    ],
+    "crew": [
+      {
+        "name": "Colin B. Fink",
+        "position": "Producer, Director, Writer, Story"
+      },
+      {
+        "name": "Nolan DuBois",
+        "position": "Director of Photography, Cinematographer, Editor, Camera, 1st AD, Sound, Story"
+      },
+      {
+        "name": "Roshan Sell",
+        "position": "2nd Assistant Director, Story"
+      },
+      {
+        "name": "Alek Begin",
+        "position": "Script Supervisor, Production Assistant, Makeup"
+      },
+      {
+        "name": "Josh Yoon",
+        "position": "Lighting, Gaffer, Production Assistant"
+      },
+      {
+        "name": "Charley Wan",
+        "position": "Lighting, Gaffer, Production Assistant"
+      },
+      {
+        "name": "Sean Burns",
+        "position": "Composer/Score"
+      },
+      {
+        "name": "Evan Enwright",
+        "position": "Locations"
+      }
+    ],
+    "imdb_url": null,
+    "vimeo_url": null,
+    "vimeo_url2": null,
+    "letterboxd_url": null,
+    "watch_count": null,
+    "list_count": null,
+    "like_count": null
+  },
+  {
     "title": "Dust & Command",
     "slug": "dust-command",
     "film_link": "/film/dust-command/",

@@ -175,10 +175,10 @@ function Films() {
                 <img
                   src={imgSrc}
                   alt={film.title}
-                  className="w-full h-auto aspect-[3/4] object-top shadow-md hover:shadow-xl"
+                  className="w-full h-auto aspect-3/4 object-top shadow-md hover:shadow-xl"
                 />
               ) : (
-                <div className="w-full h-auto aspect-[3/4] bg-gray-200 flex items-center justify-center rounded">
+                <div className="w-full h-auto aspect-3/4 bg-gray-200 flex items-center justify-center rounded">
                   <span className="text-sm text-gray-500">No Image</span>
                 </div>
               )}
