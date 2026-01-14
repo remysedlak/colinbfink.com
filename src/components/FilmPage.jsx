@@ -127,6 +127,18 @@ function FilmPage() {
     truthy: !!imgSrc,
   });
 
+  // Extract video ID from Vimeo URL
+  const extractVimeoId = (url) => {
+    if (!url) return null;
+    // Handle both numeric IDs and URL-based IDs (e.g., https://vimeo.com/colinbfink/siloafterhours)
+    const match = url.match(/vimeo\.com\/(\d+)/);
+    if (match) return match[1];
+    // For non-numeric URLs, return the full URL (some Vimeo embeds support this)
+    return url;
+  };
+
+  const vimeoId = extractVimeoId(film.vimeo_url);
+
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <div className="flex flex-col lg:flex-row gap-8">
@@ -301,12 +313,12 @@ function FilmPage() {
       </div>
 
       {/* Video Section */}
-      {film.vimeo_url && (
+      {vimeoId && (
         <div className="mb-8">
           <h3 className="text-xl font-semibold mb-4">Watch</h3>
           <div className="aspect-video bg-black rounded overflow-hidden">
             <Vimeo
-              video={film.vimeo_url}
+              video={vimeoId}
               responsive={true}
               className="w-full h-full"
             />
