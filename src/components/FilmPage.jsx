@@ -292,9 +292,21 @@ function FilmPage() {
                   href={film.vimeo_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 underline hover:text-blue-800"
+                  className="text-blue-600 underline hover:text-blue-800 flex items-center gap-1 w-fit"
                 >
+                  <img src="/icons/vimeo2.png" alt="Vimeo" className="size-5" />
                   Vimeo
+                  <svg
+                    width="10"
+                    height="10"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="ipc-icon ipc-icon--launch-inline ipc-icon--inline ipc-link__launch-icon"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    role="presentation"
+                  >
+                    <path d="M21.6 21.6H2.4V2.4h7.2V0H0v24h24v-9.6h-2.4v7.2zM14.4 0v2.4h4.8L7.195 14.49l2.4 2.4L21.6 4.8v4.8H24V0h-9.6z"></path>
+                  </svg>
                 </a>
               )}
               {film.vimeo_url2 && (
@@ -302,9 +314,21 @@ function FilmPage() {
                   href={film.vimeo_url2}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 underline hover:text-blue-800"
+                  className="text-blue-600 underline hover:text-blue-800 flex items-center gap-1 w-fit"
                 >
+                  <img src="/icons/vimeo2.png" alt="Vimeo" className="size-5" />
                   Vimeo (Alt)
+                  <svg
+                    width="10"
+                    height="10"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="ipc-icon ipc-icon--launch-inline ipc-icon--inline ipc-link__launch-icon"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    role="presentation"
+                  >
+                    <path d="M21.6 21.6H2.4V2.4h7.2V0H0v24h24v-9.6h-2.4v7.2zM14.4 0v2.4h4.8L7.195 14.49l2.4 2.4L21.6 4.8v4.8H24V0h-9.6z"></path>
+                  </svg>
                 </a>
               )}
             </div>
