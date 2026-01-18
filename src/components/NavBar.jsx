@@ -41,6 +41,14 @@ export default function Navbar() {
           Resume
         </NavLink>
         <NavLink
+          to="/more"
+          className={({ isActive }) =>
+            isActive ? "font-bold italic" : "hover:text-4xl"
+          }
+        >
+          More
+        </NavLink>
+        <NavLink
           to="/contact"
           className={({ isActive }) =>
             isActive ? "font-bold italic" : "hover:text-4xl"
@@ -86,6 +94,15 @@ export default function Navbar() {
             onClick={() => setMenuOpen(false)}
           >
             Resume
+          </NavLink>
+          <NavLink
+            to="/more"
+            className={({ isActive }) =>
+              isActive ? "font-bold italic mb-2" : "mb-2 hover:text-2xl"
+            }
+            onClick={() => setMenuOpen(false)}
+          >
+            More
           </NavLink>
           <NavLink
             to="/contact"

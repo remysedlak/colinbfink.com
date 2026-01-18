@@ -6,6 +6,7 @@ import Contact from './pages/Contact';
 import Films from './pages/Films';
 import FilmPage from './components/FilmPage';
 import Resume from './pages/Resume';
+import More from './pages/More';
 import Footer from './components/Footer';
 import './index.css'
 
@@ -19,6 +20,7 @@ function App() {
           <div className="flex-1">
             <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/more" element={<More />} />
                 <Route path="/resume" element={<Resume />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/films" element={<Films />} />
