@@ -9,9 +9,8 @@ function AboutMe() {
         className="w-full max-w-6xl bg-transparent border-y-2"
         style={{ padding: "calc(var(--space-phi) * 0.65)", marginTop: "calc(var(--space-phi) * 0.6)" }}
       >
-        <h1 className="text-3xl font-bold">Hi I am Colin Fink</h1>
-        <div className="space-y-3 text-xl leading-relaxed mt-3">
-          <p>Hello and welcome to my page! My name is Colin Fink, and I’m a filmmaker based in Pittsburgh, Pennsylvania. I’m currently studying at the University of Pittsburgh, pursuing a degree in Film and Media Production.</p>
+        <div className="space-y-3 text-xl leading-relaxed">
+          <p>Hello and welcome to my page! My name is Colin Fink, and I'm a filmmaker based in Pittsburgh, Pennsylvania. I'm currently studying at the University of Pittsburgh, pursuing a degree in Film and Media Production.</p>
           <p>Over the past several years—from high school through college—I’ve written and directed a range of short films for festivals and independent release (many of which are featured on this site). I’m always working on new projects, and I’m especially passionate about collaborating with peers and local productions whenever possible.</p>
           <p>My work is genre-driven and story-first, focusing on stylized and camp-leaning thrillers, while always using an imagine-first (then find practical solutions second) approach as a key part of my storytelling philosophy.</p>
           <p>I’m inspired by filmmakers and Pittsburgh legends who’ve helped shape the city’s creative identity, from George A. Romero to Fred Rogers, as well as Pittsburgh-area artists and icons like Dave Filoni, Michael Keaton, Jimmy Stewart, Gene Kelly, August Wilson, Andy Warhol, Billy Porter, Jeff Goldblum, and Ming-Na Wen. I see Pittsburgh as a city in transition, one rich with history and full of untapped potential—a new film capital of the world, even. After all, it was home to the first Nickelodeon. I want my work to help push it in that direction.</p>
