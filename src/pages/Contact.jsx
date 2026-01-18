@@ -15,9 +15,10 @@ const EmailIcon = () => (
 function Contact() {
     return (
         <div
-            className="min-h-screen w-full flex flex-col items-center justify-center px-6 sm:px-10 lg:px-16"
+            className="w-full min-h-screen flex flex-col items-center justify-center px-6 sm:px-10 lg:px-16"
             style={{ gap: "var(--space-phi)" }}
         >
+            <img src="/mail.jpeg" alt="Mail" className="w-32 h-32 object-contain" />
             <h1 className="text-4xl italic font-bold text-center">Contact Me</h1>
             <div
                 className="flex flex-col sm:flex-row items-center justify-center"

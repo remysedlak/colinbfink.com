@@ -7,6 +7,9 @@ import Films from './pages/Films';
 import FilmPage from './components/FilmPage';
 import Resume from './pages/Resume';
 import More from './pages/More';
+import Art from './pages/Art';
+import Photography from './pages/Photography';
+import CharityCdProject from './pages/CharityCdProject';
 import Footer from './components/Footer';
 import './index.css'
 
@@ -21,6 +24,9 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/more" element={<More />} />
+                <Route path="/more/art" element={<Art />} />
+                <Route path="/more/photography" element={<Photography />} />
+                <Route path="/more/charity-cd-project" element={<CharityCdProject />} />
                 <Route path="/resume" element={<Resume />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/films" element={<Films />} />
