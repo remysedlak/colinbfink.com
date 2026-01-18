@@ -2,12 +2,12 @@ function Footer() {
     return (
         <footer className="bg-gray-800 text-white py-1 px-4 text-center text-xs ">
         <p>
-          Colin Fink © 2025-2026 • Built by{' '}
+          Colin Fink © 2025 - 2026 • Built by{' '}
           <a 
             href="https://remysedlak.com" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="underline hover:text-gray-300 inline-flex items-center gap-1"
+            className="underline hover:text-yellow-200 inline-flex items-center gap-1"
           >
             Remy Sedlak
             <svg
