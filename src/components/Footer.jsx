@@ -7,7 +7,7 @@ function Footer() {
             href="https://remysedlak.com" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="underline hover:text-yellow-200 inline-flex items-center gap-1"
+            className="hover:underline hover:text-yellow-200 inline-flex items-center gap-1"
           >
             Remy Sedlak
             <svg
