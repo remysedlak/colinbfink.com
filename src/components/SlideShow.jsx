@@ -23,7 +23,10 @@ function SlideShow() {
   const slide = slides[current];
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-lg mx-auto mt-8">
+    <div
+      className="flex flex-col items-center justify-center w-full max-w-lg mx-auto"
+      style={{ marginTop: "var(--space-phi)" }}
+    >
       <div className="relative w-full aspect-[3/2] bg-gray-200 flex items-center justify-center rounded overflow-hidden">
         {slide && !imgError ? (
           <img

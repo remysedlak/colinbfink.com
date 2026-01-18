@@ -1,6 +1,9 @@
 function Socials() {
   return (
-    <ul className="flex flex-col grid-cols-2 gap-4 mt-8">
+    <ul
+      className="flex flex-col grid-cols-2 gap-4"
+      style={{ marginTop: "var(--space-phi)" }}
+    >
       <li className="flex flex-row gap-x-2">
         <img
           src="/icons/linkedin.svg"

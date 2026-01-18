@@ -2,3 +2,10 @@
 body {
     font-family: "Times New Roman", Times, serif;
 }
+
+:root {
+    --phi: 1.618;
+    --space-1: 1rem;
+    --space-phi: calc(var(--space-1) * var(--phi));
+    --space-phi2: calc(var(--space-phi) * var(--phi));
+}
