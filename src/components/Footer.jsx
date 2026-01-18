@@ -1,6 +1,6 @@
 function Footer() {
     return (
-        <footer className="bg-gray-800 text-white py-1 px-4 text-center text-xs ">
+        <footer className="bg-gray-800 text-white py-1 px-4 text-center text-sm ">
         <p>
           Colin Fink © 2025 - 2026 • Built by{' '}
           <a 
