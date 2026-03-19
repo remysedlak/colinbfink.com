@@ -44,6 +44,13 @@
       "image": "posters/Dust&Command_Poster1.png"
     },
     {
+      "title": "Pittsburgh: The Plastic City",
+      "date": "2025-12-31",
+      "genre": ["Documentary", "Family"],
+      "duration": "15 min",
+      "image": "posters/Plastic City.jpg"
+    },
+    {
       "title": "Sigmund Freud: A Biopic",
       "date": "2023-05-22",
       "genre": ["Drama", "History"],

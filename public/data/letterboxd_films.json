@@ -1,5 +1,60 @@
 [
   {
+    "title": "Pittsburgh: The Plastic City",
+    "slug": "pittsburgh-the-plastic-city",
+    "film_link": "/film/pittsburgh-the-plastic-city/",
+    "full_display_name": "Pittsburgh: The Plastic City (2025)",
+    "film_id": null,
+    "poster_url": null,
+    "details_endpoint": null,
+    "full_url": null,
+    "year": "2025",
+    "date": "2025-12-31",
+    "genre": [
+      "Documentary",
+      "Family"
+    ],
+    "image": "posters/Plastic City.jpg",
+    "duration": "15 min",
+    "logline": null,
+    "description": "In Pittsburgh, a Steel City turned plastic, join master builders and organizers like Logan Capell, Krista Kay, and Kevin Main, along with other AFOLs (Adult Fans of LEGO) from the Steel City LUG. As they host large-scale conventions and showcases like Ultimate Brick Show, launch hubs like the Bricks & Minifigs store, and build a community piece by piece. Created in December 2025 for the Making The Documentary Course at the University of Pittsburgh.",
+    "cast": [
+      {
+        "name": "Logan Capell",
+        "role": "Self"
+      },
+      {
+        "name": "Krista Kay",
+        "role": "Self"
+      },
+      {
+        "name": "Kevin Main",
+        "role": "Self"
+      },
+      {
+        "name": "Elliot Cramer",
+        "role": "Self"
+      }
+    ],
+    "crew": [
+      {
+        "name": "Colin B. Fink",
+        "position": "Director, Editor, Writer, Camera Operator"
+      },
+      {
+        "name": "Logan Capell",
+        "position": "Director, Editor, Writer, Camera Operator"
+      }
+    ],
+    "imdb_url": null,
+    "vimeo_url": "https://vimeo.com/colinbfink/pittsburghtheplasticcity?share=copy&fl=sv&fe=ci",
+    "vimeo_url2": null,
+    "letterboxd_url": null,
+    "watch_count": null,
+    "list_count": null,
+    "like_count": null
+  },
+  {
     "title": "Silo After Hours",
     "slug": "silo-after-hours",
     "film_link": "/film/silo-after-hours/",
