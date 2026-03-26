@@ -1,3 +1,9 @@
+import { useEffect, useState } from "react";
+
+const LOADER_MIN_VISIBLE_MS = 900;
+const LOADER_FADE_MS = 300;
+const PRELOAD_TIMEOUT_MS = 15000;
+
 const projects = [
   {
     title: "Read The Fine Print",
@@ -203,9 +209,101 @@ const getImagePath = (fileName) => {
   return encodeURI(`/Collaborative Film Work Images/${fileName}`);
 };
 
+const preloadImage = (src, timeoutMs) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    let done = false;
+
+    const finish = () => {
+      if (done) return;
+      done = true;
+      clearTimeout(timeoutId);
+      resolve();
+    };
+
+    const timeoutId = setTimeout(finish, timeoutMs);
+
+    img.onload = () => {
+      if (typeof img.decode === "function") {
+        img.decode().finally(finish);
+      } else {
+        finish();
+      }
+    };
+
+    img.onerror = finish;
+    img.src = src;
+  });
+};
+
 function CollaborativeWork() {
+  const [loading, setLoading] = useState(true);
+  const [isLoaderVisible, setIsLoaderVisible] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    let revealTimeoutId;
+    let fadeTimeoutId;
+    const startedAt = Date.now();
+
+    const preloadPageImages = async () => {
+      setLoading(true);
+      setIsLoaderVisible(true);
+
+      const allImages = [...projects.map((p) => p.image), ...additionalStills];
+      const uniqueImagePaths = [...new Set(allImages.map(getImagePath))];
+
+      await Promise.allSettled(
+        uniqueImagePaths.map((src) => preloadImage(src, PRELOAD_TIMEOUT_MS))
+      );
+
+      const elapsed = Date.now() - startedAt;
+      const remainingMinDuration = Math.max(LOADER_MIN_VISIBLE_MS - elapsed, 0);
+
+      revealTimeoutId = setTimeout(() => {
+        if (cancelled) return;
+        setLoading(false);
+
+        fadeTimeoutId = setTimeout(() => {
+          if (!cancelled) {
+            setIsLoaderVisible(false);
+          }
+        }, LOADER_FADE_MS);
+      }, remainingMinDuration);
+    };
+
+    preloadPageImages();
+
+    return () => {
+      cancelled = true;
+      clearTimeout(revealTimeoutId);
+      clearTimeout(fadeTimeoutId);
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen w-full px-6 sm:px-10 lg:px-16 py-10 bg-[#ececec]">
+    <>
+      {isLoaderVisible && (
+        <div
+          className={`fixed inset-0 bg-white flex flex-col items-center justify-center z-50 transition-opacity duration-300 ${
+            loading ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <img
+            src="/gifs/camera.gif"
+            alt="Loading..."
+            className="w-20 h-20 mb-4"
+            style={{ imageRendering: "pixelated" }}
+          />
+          <p className="text-xl text-gray-700 font-medium">Loading collaborative work...</p>
+        </div>
+      )}
+
+      <div
+        className={`min-h-screen w-full px-6 sm:px-10 lg:px-16 py-10 bg-[#ececec] transition-opacity duration-300 ${
+          loading ? "opacity-0" : "opacity-100"
+        }`}
+      >
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10">
           <h1 className="text-4xl mb-2">Collaborative Film Work</h1>
@@ -229,8 +327,8 @@ function CollaborativeWork() {
                   src={getImagePath(project.image)}
                   alt={project.title}
                   className="w-full max-w-[420px] h-auto object-cover border border-black/50"
-                  loading={idx < 2 ? "eager" : "lazy"}
-                  decoding="async"
+                  loading="eager"
+                  decoding="sync"
                 />
               </div>
             );
@@ -272,14 +370,15 @@ function CollaborativeWork() {
                 src={getImagePath(fileName)}
                 alt={fileName.replace(/[_()]/g, " ")}
                 className="w-full h-auto object-cover border border-black/40"
-                loading="lazy"
-                decoding="async"
+                loading="eager"
+                decoding="sync"
               />
             ))}
           </div>
         </section>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 
