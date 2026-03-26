@@ -6,6 +6,7 @@ import SlideShow from '../components/SlideShow';
 function Home() {
     return (
         <div className="min-h-screen w-full flex justify-center px-6 sm:px-10 lg:px-16 py-10 overflow-x-hidden">
+            <h1 className="sr-only">Colin Fink Home</h1>
             <div
                 className="flex flex-col lg:flex-row w-full max-w-7xl items-start"
                 style={{ columnGap: "var(--space-phi2)", rowGap: "var(--space-phi2)" }}

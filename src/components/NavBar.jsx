@@ -1,15 +1,33 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [filmsMenuOpen, setFilmsMenuOpen] = useState(false);
+  const menuButtonRef = useRef(null);
+  const filmsMenuRef = useRef(null);
   const location = useLocation();
   const isFilmsSection = location.pathname.startsWith("/films");
 
   useEffect(() => {
+    setMenuOpen(false);
     setFilmsMenuOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setFilmsMenuOpen(false);
+        setMenuOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
 
   return (
     <nav className="flex gap-4  border-b px-6 items-center relative">
@@ -34,14 +52,31 @@ export default function Navbar() {
         </NavLink>
         <div
           className="relative"
+          ref={filmsMenuRef}
           onMouseEnter={() => setFilmsMenuOpen(true)}
           onMouseLeave={() => setFilmsMenuOpen(false)}
+          onFocus={() => setFilmsMenuOpen(true)}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) {
+              setFilmsMenuOpen(false);
+            }
+          }}
         >
           <NavLink
             to="/films"
             end
             className={isFilmsSection ? "font-bold italic" : "hover:text-4xl"}
             onClick={() => setFilmsMenuOpen(false)}
+            aria-haspopup="menu"
+            aria-expanded={filmsMenuOpen}
+            onKeyDown={(event) => {
+              if (["Enter", " ", "ArrowDown"].includes(event.key)) {
+                event.preventDefault();
+                setFilmsMenuOpen(true);
+                const firstItem = filmsMenuRef.current?.querySelector('[role="menuitem"]');
+                firstItem?.focus();
+              }
+            }}
           >
             Films
           </NavLink>
@@ -49,10 +84,13 @@ export default function Navbar() {
             className={`absolute top-full left-0 min-w-52 rounded border bg-white py-2 shadow-lg flex-col text-xl z-50 ${
               filmsMenuOpen ? "flex" : "hidden"
             }`}
+            role="menu"
+            aria-label="Films submenu"
           >
             <NavLink
               to="/films"
               end
+              role="menuitem"
               className={({ isActive }) =>
                 isActive
                   ? "font-bold italic px-4 py-2"
@@ -64,6 +102,7 @@ export default function Navbar() {
             </NavLink>
             <NavLink
               to="/films/collaborative-work"
+              role="menuitem"
               className={({ isActive }) =>
                 isActive
                   ? "font-bold italic px-4 py-2"
@@ -118,17 +157,26 @@ export default function Navbar() {
       </div>
       {/* Mobile Dropdown Button */}
       <button
+        ref={menuButtonRef}
         className="ml-auto md:hidden p-2"
-        aria-label="Open menu"
+        aria-label={menuOpen ? "Close menu" : "Open menu"}
+        aria-expanded={menuOpen}
+        aria-controls="mobile-nav-menu"
         onClick={() => setMenuOpen((open) => !open)}
       >
-        <img src="/buttons/open-menu.svg" alt="Open menu" className="w-8 h-8" />
+        <img src="/buttons/open-menu.svg" alt="" className="w-8 h-8" />
       </button>
       {/* Mobile Dropdown Menu */}
       {menuOpen && (
-        <div className="absolute top-full right-4 bg-white shadow-lg rounded z-50 flex flex-col text-xl p-4 md:hidden">
+        <div
+          id="mobile-nav-menu"
+          role="menu"
+          aria-label="Mobile navigation"
+          className="absolute top-full right-4 bg-white shadow-lg rounded z-50 flex flex-col text-xl p-4 md:hidden"
+        >
           <NavLink
             to="/"
+            role="menuitem"
             className={({ isActive }) =>
               isActive ? "font-bold italic mb-2" : "mb-2 hover:text-2xl"
             }
@@ -140,6 +188,7 @@ export default function Navbar() {
           <NavLink
             to="/films"
             end
+            role="menuitem"
             className={({ isActive }) =>
               isActive ? "font-bold italic mb-1 ml-4" : "mb-1 ml-4 hover:text-2xl"
             }
@@ -149,6 +198,7 @@ export default function Navbar() {
           </NavLink>
           <NavLink
             to="/films/collaborative-work"
+            role="menuitem"
             className={({ isActive }) =>
               isActive ? "font-bold italic mb-2 ml-4" : "mb-2 ml-4 hover:text-2xl"
             }
@@ -158,6 +208,7 @@ export default function Navbar() {
           </NavLink>
           <NavLink
             to="/resume"
+            role="menuitem"
             className={({ isActive }) =>
               isActive ? "font-bold italic mb-2" : "mb-2 hover:text-2xl"
             }
@@ -167,6 +218,7 @@ export default function Navbar() {
           </NavLink>
           <NavLink
             to="/more"
+            role="menuitem"
             className={({ isActive }) =>
               isActive ? "font-bold italic mb-2" : "mb-2 hover:text-2xl"
             }
@@ -176,6 +228,7 @@ export default function Navbar() {
           </NavLink>
           <NavLink
             to="/contact"
+            role="menuitem"
             className={({ isActive }) =>
               isActive ? "font-bold italic mb-2" : "mb-2 hover:text-2xl"
             }

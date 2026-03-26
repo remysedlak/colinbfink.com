@@ -1,21 +1,8 @@
+import { Suspense, lazy, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import Vimeo from "@u-wave/react-vimeo";
+import { findFilmBySlug, getFilmsData, normalizeImageSrc } from "../utils/filmsData";
 
-// Same utility function from Films component
-const createSlug = (title) => {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "") // Remove special characters except hyphens
-    .replace(/[\s_-]+/g, "-") // Replace spaces and underscores with single hyphen
-    .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
-};
-
-// Function to find film by slug
-const findFilmBySlug = (films, slug) => {
-  return films.find((film) => createSlug(film.title) === slug);
-};
+const Vimeo = lazy(() => import("@u-wave/react-vimeo"));
 
 // Function to format date in human-readable format
 const formatDate = (dateString) => {
@@ -48,13 +35,15 @@ function FilmPage() {
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
     setLoading(true);
     setNotFound(false);
-    
-    fetch("/data/letterboxd_films.json")
-      .then((res) => res.json())
-      .then((data) => {
-        const found = findFilmBySlug(data, slug);
+
+    getFilmsData()
+      .then((filmsData) => {
+        if (cancelled) return;
+        const found = findFilmBySlug(filmsData, slug);
         if (found) {
           setFilm(found);
           setNotFound(false);
@@ -65,10 +54,15 @@ function FilmPage() {
         setLoading(false);
       })
       .catch(() => {
+        if (cancelled) return;
         setFilm(null);
         setNotFound(true);
         setLoading(false);
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [slug]);
 
   if (loading) {
@@ -85,9 +79,7 @@ function FilmPage() {
   }
 
   // Use image directly from letterboxd_films.json
-  const rawImgSrc = film.image;
-  const imgSrc =
-    rawImgSrc && !rawImgSrc.startsWith("/") ? `/${rawImgSrc}` : rawImgSrc;
+  const imgSrc = normalizeImageSrc(film.image);
 
   // Extract video ID from Vimeo URL
   const extractVimeoId = (url) => {
@@ -111,6 +103,8 @@ function FilmPage() {
               src={imgSrc}
               alt={film.title}
               className="w-64 h-auto rounded shadow"
+              loading="eager"
+              decoding="async"
             />
           ) : (
             <div className="w-64 h-96 bg-gray-200 rounded flex items-center justify-center">
@@ -197,10 +191,12 @@ function FilmPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 underline hover:text-blue-800 flex items-center gap-1 w-fit"
+                  aria-label="Letterboxd (opens in a new tab)"
                 >
                   <img
                     src="/icons/letterboxd.svg"
-                    alt="Letterboxd"
+                    alt=""
+                    aria-hidden="true"
                     className="size-6"
                   />
                   Letterboxd
@@ -208,10 +204,10 @@ function FilmPage() {
                     width="10"
                     height="10"
                     xmlns="http://www.w3.org/2000/svg"
-                    class="ipc-icon ipc-icon--launch-inline ipc-icon--inline ipc-link__launch-icon"
+                    className="ipc-icon ipc-icon--launch-inline ipc-icon--inline ipc-link__launch-icon"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    role="presentation"
+                    aria-hidden="true"
                   >
                     <path d="M21.6 21.6H2.4V2.4h7.2V0H0v24h24v-9.6h-2.4v7.2zM14.4 0v2.4h4.8L7.195 14.49l2.4 2.4L21.6 4.8v4.8H24V0h-9.6z"></path>
                   </svg>
@@ -223,17 +219,18 @@ function FilmPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 underline hover:text-blue-800 flex items-center gap-1 w-fit"
+                  aria-label="IMDb (opens in a new tab)"
                 >
-                  <img src="/icons/imdb.svg" alt="IMDb" className="size-6" />
+                  <img src="/icons/imdb.svg" alt="" aria-hidden="true" className="size-6" />
                   IMDb
                   <svg
                     width="10"
                     height="10"
                     xmlns="http://www.w3.org/2000/svg"
-                    class="ipc-icon ipc-icon--launch-inline ipc-icon--inline ipc-link__launch-icon"
+                    className="ipc-icon ipc-icon--launch-inline ipc-icon--inline ipc-link__launch-icon"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    role="presentation"
+                    aria-hidden="true"
                   >
                     <path d="M21.6 21.6H2.4V2.4h7.2V0H0v24h24v-9.6h-2.4v7.2zM14.4 0v2.4h4.8L7.195 14.49l2.4 2.4L21.6 4.8v4.8H24V0h-9.6z"></path>
                   </svg>
@@ -245,17 +242,18 @@ function FilmPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 underline hover:text-blue-800 flex items-center gap-1 w-fit"
+                  aria-label="Vimeo (opens in a new tab)"
                 >
-                  <img src="/icons/vimeo2.png" alt="Vimeo" className="size-5" />
+                  <img src="/icons/vimeo2.png" alt="" aria-hidden="true" className="size-5" />
                   Vimeo
                   <svg
                     width="10"
                     height="10"
                     xmlns="http://www.w3.org/2000/svg"
-                    class="ipc-icon ipc-icon--launch-inline ipc-icon--inline ipc-link__launch-icon"
+                    className="ipc-icon ipc-icon--launch-inline ipc-icon--inline ipc-link__launch-icon"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    role="presentation"
+                    aria-hidden="true"
                   >
                     <path d="M21.6 21.6H2.4V2.4h7.2V0H0v24h24v-9.6h-2.4v7.2zM14.4 0v2.4h4.8L7.195 14.49l2.4 2.4L21.6 4.8v4.8H24V0h-9.6z"></path>
                   </svg>
@@ -267,17 +265,18 @@ function FilmPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 underline hover:text-blue-800 flex items-center gap-1 w-fit"
+                  aria-label="Vimeo alternate link (opens in a new tab)"
                 >
-                  <img src="/icons/vimeo2.png" alt="Vimeo" className="size-5" />
+                  <img src="/icons/vimeo2.png" alt="" aria-hidden="true" className="size-5" />
                   Vimeo (Alt)
                   <svg
                     width="10"
                     height="10"
                     xmlns="http://www.w3.org/2000/svg"
-                    class="ipc-icon ipc-icon--launch-inline ipc-icon--inline ipc-link__launch-icon"
+                    className="ipc-icon ipc-icon--launch-inline ipc-icon--inline ipc-link__launch-icon"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    role="presentation"
+                    aria-hidden="true"
                   >
                     <path d="M21.6 21.6H2.4V2.4h7.2V0H0v24h24v-9.6h-2.4v7.2zM14.4 0v2.4h4.8L7.195 14.49l2.4 2.4L21.6 4.8v4.8H24V0h-9.6z"></path>
                   </svg>
@@ -293,11 +292,13 @@ function FilmPage() {
         <div className="mb-8">
           <h3 className="text-xl font-semibold mb-4">Watch</h3>
           <div className="aspect-video bg-black rounded overflow-hidden">
-            <Vimeo
-              video={vimeoId}
-              responsive={true}
-              className="w-full h-full"
-            />
+            <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-white">Loading video...</div>}>
+              <Vimeo
+                video={vimeoId}
+                responsive={true}
+                className="w-full h-full"
+              />
+            </Suspense>
           </div>
         </div>
       )}

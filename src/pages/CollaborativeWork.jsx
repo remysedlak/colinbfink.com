@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 const LOADER_MIN_VISIBLE_MS = 900;
 const LOADER_FADE_MS = 300;
-const PRELOAD_TIMEOUT_MS = 15000;
 
 const projects = [
   {
@@ -209,33 +208,6 @@ const getImagePath = (fileName) => {
   return encodeURI(`/Collaborative Film Work Images/${fileName}`);
 };
 
-const preloadImage = (src, timeoutMs) => {
-  return new Promise((resolve) => {
-    const img = new Image();
-    let done = false;
-
-    const finish = () => {
-      if (done) return;
-      done = true;
-      clearTimeout(timeoutId);
-      resolve();
-    };
-
-    const timeoutId = setTimeout(finish, timeoutMs);
-
-    img.onload = () => {
-      if (typeof img.decode === "function") {
-        img.decode().finally(finish);
-      } else {
-        finish();
-      }
-    };
-
-    img.onerror = finish;
-    img.src = src;
-  });
-};
-
 function CollaborativeWork() {
   const [loading, setLoading] = useState(true);
   const [isLoaderVisible, setIsLoaderVisible] = useState(true);
@@ -246,16 +218,9 @@ function CollaborativeWork() {
     let fadeTimeoutId;
     const startedAt = Date.now();
 
-    const preloadPageImages = async () => {
+    const loadPage = async () => {
       setLoading(true);
       setIsLoaderVisible(true);
-
-      const allImages = [...projects.map((p) => p.image), ...additionalStills];
-      const uniqueImagePaths = [...new Set(allImages.map(getImagePath))];
-
-      await Promise.allSettled(
-        uniqueImagePaths.map((src) => preloadImage(src, PRELOAD_TIMEOUT_MS))
-      );
 
       const elapsed = Date.now() - startedAt;
       const remainingMinDuration = Math.max(LOADER_MIN_VISIBLE_MS - elapsed, 0);
@@ -272,7 +237,7 @@ function CollaborativeWork() {
       }, remainingMinDuration);
     };
 
-    preloadPageImages();
+    loadPage();
 
     return () => {
       cancelled = true;
@@ -327,8 +292,8 @@ function CollaborativeWork() {
                   src={getImagePath(project.image)}
                   alt={project.title}
                   className="w-full max-w-[420px] h-auto object-cover border border-black/50"
-                  loading="eager"
-                  decoding="sync"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             );
@@ -370,8 +335,8 @@ function CollaborativeWork() {
                 src={getImagePath(fileName)}
                 alt={fileName.replace(/[_()]/g, " ")}
                 className="w-full h-auto object-cover border border-black/40"
-                loading="eager"
-                decoding="sync"
+                loading="lazy"
+                decoding="async"
               />
             ))}
           </div>

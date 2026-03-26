@@ -3,34 +3,6 @@ import { Link } from "react-router-dom";
 
 const LOADER_MIN_VISIBLE_MS = 900;
 const LOADER_FADE_MS = 300;
-const PRELOAD_TIMEOUT_MS = 15000;
-
-const preloadImage = (src, timeoutMs) => {
-  return new Promise((resolve) => {
-    const img = new Image();
-    let done = false;
-
-    const finish = () => {
-      if (done) return;
-      done = true;
-      clearTimeout(timeoutId);
-      resolve();
-    };
-
-    const timeoutId = setTimeout(finish, timeoutMs);
-
-    img.onload = () => {
-      if (typeof img.decode === "function") {
-        img.decode().finally(finish);
-      } else {
-        finish();
-      }
-    };
-
-    img.onerror = finish;
-    img.src = src;
-  });
-};
 
 const moreItems = [
   {
@@ -87,14 +59,9 @@ function More() {
     let fadeTimeoutId;
     const startedAt = Date.now();
 
-    const preloadMoreImages = async () => {
+    const loadPage = async () => {
       setLoading(true);
       setIsLoaderVisible(true);
-
-      const uniqueImagePaths = [...new Set(moreItems.map((item) => item.image))];
-      await Promise.allSettled(
-        uniqueImagePaths.map((src) => preloadImage(src, PRELOAD_TIMEOUT_MS))
-      );
 
       const elapsed = Date.now() - startedAt;
       const remainingMinDuration = Math.max(LOADER_MIN_VISIBLE_MS - elapsed, 0);
@@ -111,7 +78,7 @@ function More() {
       }, remainingMinDuration);
     };
 
-    preloadMoreImages();
+    loadPage();
 
     return () => {
       cancelled = true;
@@ -161,8 +128,8 @@ function More() {
                   src={item.image}
                   alt={item.title}
                   className="w-64 md:w-72 aspect-[4/3] object-contain bg-white rounded-lg hover:shadow-lg transition-transform duration-200 hover:scale-105 cursor-pointer"
-                  loading="eager"
-                  decoding="sync"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <p className="text-xl md:text-2xl font-semibold text-center">{item.label}</p>
               </Link>

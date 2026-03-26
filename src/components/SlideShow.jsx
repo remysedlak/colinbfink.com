@@ -49,6 +49,7 @@ function SlideShow() {
           onClick={handlePrev}
           className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
           disabled={slides.length === 0}
+          aria-label="Previous slide"
         >
           Prev
         </button>
@@ -56,6 +57,7 @@ function SlideShow() {
           onClick={handleNext}
           className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
           disabled={slides.length === 0}
+          aria-label="Next slide"
         >
           Next
         </button>

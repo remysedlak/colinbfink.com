@@ -1,51 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
+import { createFilmSlug, getFilmsData, normalizeImageSrc } from "../utils/filmsData";
 
 const LOADER_MIN_VISIBLE_MS = 900;
 const LOADER_FADE_MS = 300;
-const PRELOAD_TIMEOUT_MS = 15000;
-
-const normalizeImageSrc = (src) => {
-  if (!src) return "";
-  return src.startsWith("/") ? src : `/${src}`;
-};
-
-const preloadImage = (src, timeoutMs) => {
-  return new Promise((resolve) => {
-    const img = new Image();
-    let done = false;
-
-    const finish = () => {
-      if (done) return;
-      done = true;
-      clearTimeout(timeoutId);
-      resolve();
-    };
-
-    const timeoutId = setTimeout(finish, timeoutMs);
-
-    img.onload = () => {
-      if (typeof img.decode === "function") {
-        img.decode().finally(finish);
-      } else {
-        finish();
-      }
-    };
-
-    img.onerror = finish;
-    img.src = src;
-  });
-};
-
-// Utility function to create SEO-friendly slugs
-const createSlug = (title) => {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '') // Remove special characters except hyphens
-    .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with single hyphen
-    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
-};
 
 function Films() {
   const [films, setFilms] = useState([]);
@@ -65,18 +23,10 @@ function Films() {
       setIsLoaderVisible(true);
 
       try {
-        const response = await fetch("/data/letterboxd_films.json");
-        const data = await response.json();
-        const filmsData = Array.isArray(data) ? data : [];
+        const filmsData = await getFilmsData();
 
         if (cancelled) return;
         setFilms(filmsData);
-
-        const imagePromises = filmsData
-          .filter((film) => film.image)
-          .map((film) => preloadImage(normalizeImageSrc(film.image), PRELOAD_TIMEOUT_MS));
-
-        await Promise.allSettled(imagePromises);
       } catch {
         if (cancelled) return;
         setFilms([]);
@@ -178,20 +128,30 @@ function Films() {
       <div className="flex flex-col items-center justify-center mb-4">
         <h1 className="text-4xl text-center mb-2">My Films</h1>
         <div className="flex gap-4 items-center my-2">
+          <label htmlFor="films-sort" className="sr-only">
+            Sort films
+          </label>
           <select
+            id="films-sort"
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
             className="border px-4 py-2 rounded text-xl hover:bg-gray-100"
+            aria-label="Sort films"
           >
             <option value="earliest">Earliest</option>
             <option value="oldest">Most recent</option>
             <option value="duration-shortest">Duration: Shortest</option>
             <option value="duration-longest">Duration: Longest</option>
           </select>
+          <label htmlFor="films-genre" className="sr-only">
+            Filter films by genre
+          </label>
           <select
+            id="films-genre"
             value={genreFilter}
             onChange={(e) => setGenreFilter(e.target.value)}
             className="border px-4 py-2 rounded text-xl hover:bg-gray-100"
+            aria-label="Filter films by genre"
           >
             <option value="">All Genres</option>
             {allGenres.map((genre) => (
@@ -210,7 +170,7 @@ function Films() {
           return (
             <Link
               key={i}
-              to={`/films/${createSlug(film.title)}`}
+              to={`/films/${createFilmSlug(film.title)}`}
               state={{ imgSrc }}
               className="flex flex-col items-center text-center transition-transform duration-200 hover:scale-105"
             >
@@ -219,8 +179,8 @@ function Films() {
                   src={imgSrc}
                   alt={film.title}
                   className="w-full h-auto aspect-3/4 object-top shadow-md hover:shadow-xl"
-                  loading="eager"
-                  decoding="sync"
+                  loading="lazy"
+                  decoding="async"
                 />
               ) : (
                 <div className="w-full h-auto aspect-3/4 bg-gray-200 flex items-center justify-center rounded">

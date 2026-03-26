@@ -1,4 +1,4 @@
-import MoreTemplatePage from "../components/MoreTemplatePage";
+import MoreTemplatePage from "../../components/MoreTemplatePage";
 
 function Art() {
   return (
