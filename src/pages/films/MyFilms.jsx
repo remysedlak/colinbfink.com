@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { createFilmSlug, getFilmsData, normalizeImageSrc } from "../utils/filmsData";
+import { createFilmSlug, getFilmsData, normalizeImageSrc } from "../../utils/filmsData";
 
 const LOADER_MIN_VISIBLE_MS = 900;
 const LOADER_FADE_MS = 300;

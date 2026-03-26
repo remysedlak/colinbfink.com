@@ -4,10 +4,11 @@ import NavBar from './components/NavBar'
 import Footer from './components/Footer';
 import './index.css'
 
+{/* Lazy loading pages for speed optimization and content splitting */}
 const Home = lazy(() => import('./pages/Home'));
 const Contact = lazy(() => import('./pages/Contact'));
-const Films = lazy(() => import('./pages/Films'));
-const CollaborativeWork = lazy(() => import('./pages/CollaborativeWork'));
+const Films = lazy(() => import('./pages/films/MyFilms'));
+const CollaborativeWork = lazy(() => import('./pages/films/CollaborativeWork'));
 const FilmPage = lazy(() => import('./components/FilmPage'));
 const Resume = lazy(() => import('./pages/Resume'));
 const More = lazy(() => import('./pages/More'));
@@ -29,6 +30,7 @@ function App() {
       <main className='overflow-auto flex-2' role="main">
         <div className="min-h-full flex flex-col">
           <div className="flex-1">
+            {/* Uses a fallback page while assets are loading to memory */}
             <Suspense
               fallback={
                 <div className="textured-background min-h-[40vh] flex items-center justify-center px-4">
@@ -36,6 +38,7 @@ function App() {
                 </div>
               }
             >
+              {/* Router */}
               <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/more" element={<More />} />

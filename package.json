@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lh": "node scripts/run-lighthouse.mjs",
+    "lh:home": "node scripts/run-lighthouse.mjs /",
+    "lh:films": "node scripts/run-lighthouse.mjs /films /films/collaborative-work"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
@@ -26,6 +29,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
+    "lighthouse": "^13.0.3",
     "vite": "^7.1.2"
   }
 }
