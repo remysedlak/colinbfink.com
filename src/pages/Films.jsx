@@ -1,6 +1,42 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 
+const LOADER_MIN_VISIBLE_MS = 900;
+const LOADER_FADE_MS = 300;
+const PRELOAD_TIMEOUT_MS = 15000;
+
+const normalizeImageSrc = (src) => {
+  if (!src) return "";
+  return src.startsWith("/") ? src : `/${src}`;
+};
+
+const preloadImage = (src, timeoutMs) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    let done = false;
+
+    const finish = () => {
+      if (done) return;
+      done = true;
+      clearTimeout(timeoutId);
+      resolve();
+    };
+
+    const timeoutId = setTimeout(finish, timeoutMs);
+
+    img.onload = () => {
+      if (typeof img.decode === "function") {
+        img.decode().finally(finish);
+      } else {
+        finish();
+      }
+    };
+
+    img.onerror = finish;
+    img.src = src;
+  });
+};
+
 // Utility function to create SEO-friendly slugs
 const createSlug = (title) => {
   return title
@@ -16,57 +52,58 @@ function Films() {
   const [sortOrder, setSortOrder] = useState("oldest");
   const [genreFilter, setGenreFilter] = useState("");
   const [loading, setLoading] = useState(true);
-  const [preloadedImages, setPreloadedImages] = useState(new Map());
+  const [isLoaderVisible, setIsLoaderVisible] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    fetch("/data/letterboxd_films.json")
-      .then((res) => res.json())
-      .then((data) => {
+    let cancelled = false;
+    let revealTimeoutId;
+    let fadeTimeoutId;
+    const startedAt = Date.now();
+
+    const loadFilms = async () => {
+      setLoading(true);
+      setIsLoaderVisible(true);
+
+      try {
+        const response = await fetch("/data/letterboxd_films.json");
+        const data = await response.json();
         const filmsData = Array.isArray(data) ? data : [];
+
+        if (cancelled) return;
         setFilms(filmsData);
-        
-        // Preload all images and store them
-        const imageCache = new Map();
+
         const imagePromises = filmsData
-          .filter(film => film.image)
-          .map(film => {
-            return new Promise((resolve) => {
-              const img = new Image();
-              img.onload = () => {
-                // Store the loaded image object
-                imageCache.set(film.image, img);
-                console.log(`✅ Loaded: ${film.title}`);
-                resolve();
-              };
-              img.onerror = () => {
-                console.log(`❌ Failed: ${film.title}`);
-                resolve(); // Still resolve if image fails
-              };
-              img.src = film.image;
-            });
-          });
-        
-        // Wait for all images to load
-        Promise.all(imagePromises).then(() => {
-          console.log("All images preloaded and cached!");
-          setPreloadedImages(imageCache);
-          // Add small delay to ensure everything is ready
-          setTimeout(() => {
-            setLoading(false);
-          }, 500);
-        });
-        
-        // Fallback timeout in case some images take too long
-        setTimeout(() => {
-          setPreloadedImages(imageCache);
-          setLoading(false);
-        }, 10000); // 10 second max wait
-      })
-      .catch(() => {
+          .filter((film) => film.image)
+          .map((film) => preloadImage(normalizeImageSrc(film.image), PRELOAD_TIMEOUT_MS));
+
+        await Promise.allSettled(imagePromises);
+      } catch {
+        if (cancelled) return;
         setFilms([]);
+      }
+
+      const elapsed = Date.now() - startedAt;
+      const remainingMinDuration = Math.max(LOADER_MIN_VISIBLE_MS - elapsed, 0);
+
+      revealTimeoutId = setTimeout(() => {
+        if (cancelled) return;
         setLoading(false);
-      });
+
+        fadeTimeoutId = setTimeout(() => {
+          if (!cancelled) {
+            setIsLoaderVisible(false);
+          }
+        }, LOADER_FADE_MS);
+      }, remainingMinDuration);
+    };
+
+    loadFilms();
+
+    return () => {
+      cancelled = true;
+      clearTimeout(revealTimeoutId);
+      clearTimeout(fadeTimeoutId);
+    };
   }, []);
 
   const allGenres = useMemo(() => {
@@ -115,23 +152,29 @@ function Films() {
     });
   }, [films, sortOrder, genreFilter]);
 
-  // Show loading screen while images are preloading
-  if (loading) {
-    return (
-      <div className="fixed inset-0 bg-white flex flex-col items-center justify-center z-50">
-        <img 
-          src="/gifs/camera.gif" 
-          alt="Loading..." 
-          className="w-20 h-20 mb-4"
-          style={{ imageRendering: 'pixelated' }}
-        />
-        <p className="text-xl text-gray-700 font-medium">Loading films...</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="p-4">
+    <>
+      {isLoaderVisible && (
+        <div
+          className={`fixed inset-0 bg-white flex flex-col items-center justify-center z-50 transition-opacity duration-300 ${
+            loading ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <img
+            src="/gifs/camera.gif"
+            alt="Loading..."
+            className="w-20 h-20 mb-4"
+            style={{ imageRendering: "pixelated" }}
+          />
+          <p className="text-xl text-gray-700 font-medium">Loading films...</p>
+        </div>
+      )}
+
+      <div
+        className={`p-4 transition-opacity duration-300 ${
+          loading ? "opacity-0" : "opacity-100"
+        }`}
+      >
       <div className="flex flex-col items-center justify-center mb-4">
         <h1 className="text-4xl text-center mb-2">My Films</h1>
         <div className="flex gap-4 items-center my-2">
@@ -162,7 +205,7 @@ function Films() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8 px-4 md:px-32 lg:px-32 xl:px-64">
         {displayedFilms.map((film, i) => {
           // Use image directly from letterboxd_films.json
-          const imgSrc = film.image;
+          const imgSrc = normalizeImageSrc(film.image);
           
           return (
             <Link
@@ -176,6 +219,8 @@ function Films() {
                   src={imgSrc}
                   alt={film.title}
                   className="w-full h-auto aspect-3/4 object-top shadow-md hover:shadow-xl"
+                  loading="eager"
+                  decoding="sync"
                 />
               ) : (
                 <div className="w-full h-auto aspect-3/4 bg-gray-200 flex items-center justify-center rounded">
@@ -193,7 +238,8 @@ function Films() {
           );
         })}
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 

@@ -44,39 +44,8 @@ const formatDate = (dateString) => {
 function FilmPage() {
   const { title: slug } = useParams();
   const [film, setFilm] = useState(null);
-  const [imageMap, setImageMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-
-  // Helper to normalize titles for matching
-  // Improved normalization: remove apostrophes, smart quotes, replace &/and, collapse spaces, lowercase
-  const normalizeTitle = (title) => {
-    if (!title) return "";
-    let t = title.toLowerCase().trim();
-    t = t.replace(/[''"""]/g, ""); // remove quotes
-    t = t.replace(/\band\b/g, "&"); // replace 'and' with '&'
-    t = t.replace(/&/g, "and"); // replace '&' with 'and'
-    t = t.replace(/[^\w\s-]/g, ""); // remove non-word except space/hyphen
-    t = t.replace(/[\s_-]+/g, "-"); // collapse spaces/hyphens
-    return t;
-  };
-
-  useEffect(() => {
-    // Fetch image map from films.json
-    fetch("/data/films.json")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && Array.isArray(data.films)) {
-          const map = {};
-          data.films.forEach((f) => {
-            const key = normalizeTitle(f.title);
-            map[key] = f.image;
-          });
-          setImageMap(map);
-        }
-      })
-      .catch(() => setImageMap({}));
-  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -120,13 +89,6 @@ function FilmPage() {
   const imgSrc =
     rawImgSrc && !rawImgSrc.startsWith("/") ? `/${rawImgSrc}` : rawImgSrc;
 
-  console.log("Image source debug:", {
-    raw: rawImgSrc,
-    processed: imgSrc,
-    type: typeof imgSrc,
-    truthy: !!imgSrc,
-  });
-
   // Extract video ID from Vimeo URL
   const extractVimeoId = (url) => {
     if (!url) return null;
@@ -149,16 +111,6 @@ function FilmPage() {
               src={imgSrc}
               alt={film.title}
               className="w-64 h-auto rounded shadow"
-              onLoad={() =>
-                console.log("✅ Image loaded successfully:", imgSrc)
-              }
-              onError={(e) => {
-                console.error("❌ Image failed to load:", {
-                  src: imgSrc,
-                  error: e.target.error,
-                  message: "Image not found or failed to load",
-                });
-              }}
             />
           ) : (
             <div className="w-64 h-96 bg-gray-200 rounded flex items-center justify-center">

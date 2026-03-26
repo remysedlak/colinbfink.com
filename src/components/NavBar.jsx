@@ -1,8 +1,15 @@
-import { Link, NavLink } from "react-router-dom";
-import { useState } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [filmsMenuOpen, setFilmsMenuOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    setFilmsMenuOpen(false);
+  }, [location.pathname]);
+
   return (
     <nav className="flex gap-4  border-b px-6 items-center relative">
       <div className="flex items-center gap-3">
@@ -24,14 +31,49 @@ export default function Navbar() {
         >
           Home
         </NavLink>
-        <NavLink
-          to="/films"
-          className={({ isActive }) =>
-            isActive ? "font-bold italic" : "hover:text-4xl"
-          }
+        <div
+          className="relative"
+          onMouseEnter={() => setFilmsMenuOpen(true)}
+          onMouseLeave={() => setFilmsMenuOpen(false)}
         >
-          Films
-        </NavLink>
+          <NavLink
+            to="/films"
+            end
+            className="hover:text-4xl"
+            onClick={() => setFilmsMenuOpen(false)}
+          >
+            Films
+          </NavLink>
+          <div
+            className={`absolute top-full left-0 min-w-52 rounded border bg-white py-2 shadow-lg flex-col text-xl z-50 ${
+              filmsMenuOpen ? "flex" : "hidden"
+            }`}
+          >
+            <NavLink
+              to="/films"
+              end
+              className={({ isActive }) =>
+                isActive
+                  ? "font-bold italic px-4 py-2"
+                  : "px-4 py-2 hover:bg-gray-100"
+              }
+              onClick={() => setFilmsMenuOpen(false)}
+            >
+              My Films
+            </NavLink>
+            <NavLink
+              to="/films/collaborative-work"
+              className={({ isActive }) =>
+                isActive
+                  ? "font-bold italic px-4 py-2"
+                  : "px-4 py-2 hover:bg-gray-100"
+              }
+              onClick={() => setFilmsMenuOpen(false)}
+            >
+              Collaborative Work
+            </NavLink>
+          </div>
+        </div>
         <NavLink
           to="/resume"
           className={({ isActive }) =>
@@ -41,12 +83,28 @@ export default function Navbar() {
           Resume
         </NavLink>
         <NavLink
+          to="/references"
+          className={({ isActive }) =>
+            isActive ? "font-bold italic" : "hover:text-4xl"
+          }
+        >
+          References
+        </NavLink>
+        <NavLink
           to="/more"
           className={({ isActive }) =>
             isActive ? "font-bold italic" : "hover:text-4xl"
           }
         >
           More
+        </NavLink>
+        <NavLink
+          to="/photos"
+          className={({ isActive }) =>
+            isActive ? "font-bold italic" : "hover:text-4xl"
+          }
+        >
+          Photos
         </NavLink>
         <NavLink
           to="/contact"
@@ -77,14 +135,25 @@ export default function Navbar() {
           >
             Home
           </NavLink>
+          <p className="mb-1">Films</p>
           <NavLink
             to="/films"
+            end
             className={({ isActive }) =>
-              isActive ? "font-bold italic mb-2" : "mb-2 hover:text-2xl"
+              isActive ? "font-bold italic mb-1 ml-4" : "mb-1 ml-4 hover:text-2xl"
             }
             onClick={() => setMenuOpen(false)}
           >
-            Films
+            My Films
+          </NavLink>
+          <NavLink
+            to="/films/collaborative-work"
+            className={({ isActive }) =>
+              isActive ? "font-bold italic mb-2 ml-4" : "mb-2 ml-4 hover:text-2xl"
+            }
+            onClick={() => setMenuOpen(false)}
+          >
+            Collaborative Work
           </NavLink>
           <NavLink
             to="/resume"
