@@ -5,6 +5,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [filmsMenuOpen, setFilmsMenuOpen] = useState(false);
   const location = useLocation();
+  const isFilmsSection = location.pathname.startsWith("/films");
 
   useEffect(() => {
     setFilmsMenuOpen(false);
@@ -39,7 +40,7 @@ export default function Navbar() {
           <NavLink
             to="/films"
             end
-            className="hover:text-4xl"
+            className={isFilmsSection ? "font-bold italic" : "hover:text-4xl"}
             onClick={() => setFilmsMenuOpen(false)}
           >
             Films
@@ -135,7 +136,7 @@ export default function Navbar() {
           >
             Home
           </NavLink>
-          <p className="mb-1">Films</p>
+          <p className={isFilmsSection ? "font-bold italic mb-1" : "mb-1"}>Films</p>
           <NavLink
             to="/films"
             end
