@@ -1,19 +1,13 @@
+import MoreTemplatePage from "../components/MoreTemplatePage";
+
 function Art() {
   return (
-    <div
-      className="min-h-screen w-full flex flex-col items-center justify-center px-6 sm:px-10 lg:px-16 py-10"
-      style={{ gap: "var(--space-phi)" }}
-    >
-      <h1 className="text-4xl italic font-bold text-center">Art</h1>
-      <div
-        className="flex flex-col items-center max-w-3xl w-full text-center"
-        style={{ gap: "calc(var(--space-phi) * 0.75)" }}
-      >
-        <p className="text-xl leading-relaxed">
-          Come back later for more content!
-        </p>
-      </div>
-    </div>
+    <MoreTemplatePage
+      title="Art"
+      subtitle="Illustration, design, and experimental visual work."
+      intro="This section will host selected artwork, studies, and project breakdowns with notes on style and process."
+      highlights={["Illustrations", "Design Work", "Sketchbook"]}
+    />
   );
 }
 

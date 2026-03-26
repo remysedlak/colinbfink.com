@@ -1,4 +1,36 @@
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
+const LOADER_MIN_VISIBLE_MS = 900;
+const LOADER_FADE_MS = 300;
+const PRELOAD_TIMEOUT_MS = 15000;
+
+const preloadImage = (src, timeoutMs) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    let done = false;
+
+    const finish = () => {
+      if (done) return;
+      done = true;
+      clearTimeout(timeoutId);
+      resolve();
+    };
+
+    const timeoutId = setTimeout(finish, timeoutMs);
+
+    img.onload = () => {
+      if (typeof img.decode === "function") {
+        img.decode().finally(finish);
+      } else {
+        finish();
+      }
+    };
+
+    img.onerror = finish;
+    img.src = src;
+  });
+};
 
 const moreItems = [
   {
@@ -46,35 +78,99 @@ const moreItems = [
 ];
 
 function More() {
+  const [loading, setLoading] = useState(true);
+  const [isLoaderVisible, setIsLoaderVisible] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    let revealTimeoutId;
+    let fadeTimeoutId;
+    const startedAt = Date.now();
+
+    const preloadMoreImages = async () => {
+      setLoading(true);
+      setIsLoaderVisible(true);
+
+      const uniqueImagePaths = [...new Set(moreItems.map((item) => item.image))];
+      await Promise.allSettled(
+        uniqueImagePaths.map((src) => preloadImage(src, PRELOAD_TIMEOUT_MS))
+      );
+
+      const elapsed = Date.now() - startedAt;
+      const remainingMinDuration = Math.max(LOADER_MIN_VISIBLE_MS - elapsed, 0);
+
+      revealTimeoutId = setTimeout(() => {
+        if (cancelled) return;
+        setLoading(false);
+
+        fadeTimeoutId = setTimeout(() => {
+          if (!cancelled) {
+            setIsLoaderVisible(false);
+          }
+        }, LOADER_FADE_MS);
+      }, remainingMinDuration);
+    };
+
+    preloadMoreImages();
+
+    return () => {
+      cancelled = true;
+      clearTimeout(revealTimeoutId);
+      clearTimeout(fadeTimeoutId);
+    };
+  }, []);
+
   return (
-    <div className="w-full h-full flex flex-col">
-      <h1 className="text-4xl italic font-bold text-center py-20">More</h1>
-      
-      <div className="flex-1 flex items-center justify-center w-full px-6 pb-16">
+    <>
+      {isLoaderVisible && (
         <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 place-items-center w-full max-w-7xl"
-          style={{ gap: "calc(var(--space-phi) * 1.5)" }}
+          className={`textured-background fixed inset-0 flex flex-col items-center justify-center z-50 transition-opacity duration-300 ${
+            loading ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
         >
-          {moreItems.map((item) => (
-            <Link
-              key={item.title}
-              to={item.to}
-              className="flex flex-col items-center hover:opacity-85 transition-opacity"
-              style={{ gap: "calc(var(--space-phi) * 0.45)" }}
-            >
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-64 md:w-72 aspect-[4/3] object-contain bg-white rounded-lg hover:shadow-lg transition-transform duration-200 hover:scale-105 cursor-pointer"
-                loading="lazy"
-                decoding="async"
-              />
-              <p className="text-xl md:text-2xl font-semibold text-center">{item.label}</p>
-            </Link>
-          ))}
+          <img
+            src="/gifs/camera.gif"
+            alt="Loading..."
+            className="w-20 h-20 mb-4"
+            style={{ imageRendering: "pixelated" }}
+          />
+          <p className="text-xl text-gray-700 font-medium">Loading more...</p>
+        </div>
+      )}
+
+      <div
+        className={`textured-background w-full h-full flex flex-col transition-opacity duration-300 ${
+          loading ? "opacity-0" : "opacity-100"
+        }`}
+      >
+        <h1 className="text-4xl italic font-bold text-center py-20">More</h1>
+
+        <div className="flex-1 flex items-center justify-center w-full px-6 pb-16">
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 place-items-center w-full max-w-7xl"
+            style={{ gap: "calc(var(--space-phi) * 1.5)" }}
+          >
+            {moreItems.map((item) => (
+              <Link
+                key={item.title}
+                to={item.to}
+                className="flex flex-col items-center hover:opacity-85 transition-opacity"
+                style={{ gap: "calc(var(--space-phi) * 0.45)" }}
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-64 md:w-72 aspect-[4/3] object-contain bg-white rounded-lg hover:shadow-lg transition-transform duration-200 hover:scale-105 cursor-pointer"
+                  loading="eager"
+                  decoding="sync"
+                />
+                <p className="text-xl md:text-2xl font-semibold text-center">{item.label}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

@@ -156,7 +156,7 @@ function Films() {
     <>
       {isLoaderVisible && (
         <div
-          className={`fixed inset-0 bg-white flex flex-col items-center justify-center z-50 transition-opacity duration-300 ${
+          className={`textured-background fixed inset-0 flex flex-col items-center justify-center z-50 transition-opacity duration-300 ${
             loading ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >
@@ -171,7 +171,7 @@ function Films() {
       )}
 
       <div
-        className={`p-4 transition-opacity duration-300 ${
+        className={`textured-background p-4 transition-opacity duration-300 ${
           loading ? "opacity-0" : "opacity-100"
         }`}
       >

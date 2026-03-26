@@ -1,19 +1,13 @@
+import MoreTemplatePage from "../components/MoreTemplatePage";
+
 function Photography() {
   return (
-    <div
-      className="min-h-screen w-full flex flex-col items-center justify-center px-6 sm:px-10 lg:px-16 py-10"
-      style={{ gap: "var(--space-phi)" }}
-    >
-      <h1 className="text-4xl italic font-bold text-center">Photography</h1>
-      <div
-        className="flex flex-col items-center max-w-3xl w-full text-center"
-        style={{ gap: "calc(var(--space-phi) * 0.75)" }}
-      >
-        <p className="text-xl leading-relaxed">
-          Come back later for more content!
-        </p>
-      </div>
-    </div>
+    <MoreTemplatePage
+      title="Photography"
+      subtitle="A collection of stills, portraits, and visual studies."
+      intro="This page will feature curated photography projects, selected frames, and process notes behind each shoot."
+      highlights={["Featured Sets", "Portrait Series", "Behind The Frame"]}
+    />
   );
 }
 
